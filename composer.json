@@ -1,0 +1,15 @@
+{
+    "name": "kgb/system",
+    "autoload": {
+        "psr-4": {
+            "System\\": ["src/", "src/Controllers/", "src/Database/"]
+        }
+    },
+    "authors": [
+        {
+            "name": "Randriatavy Mandresy",
+            "email": "mandresyrvy@gmail.com"
+        }
+    ],
+    "require": {}
+}
