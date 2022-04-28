@@ -25,7 +25,7 @@ class IndexController extends Controller
     {
         $title = TextTool::setTitle('accueil');
 
-        self::render('index', compact(static::$compact));
+        self::render('base/index', compact(static::$compact));
     }
 
     private static function notFound ()
@@ -33,7 +33,7 @@ class IndexController extends Controller
         $title = TextTool::setTitle('introuvable');
         $h1 = '404';
 
-        self::render('error', compact(static::compact(['h1'])));
+        self::render('base/error', compact(static::compact(['h1'])));
     }
 
     private static function denied ()
@@ -41,6 +41,6 @@ class IndexController extends Controller
         $title = TextTool::setTitle('accès refuser');
         $h1 = '405';
 
-        self::render('error', compact(static::compact(['h1'])));
+        self::render('base/error', compact(static::compact(['h1'])));
     }
 }
