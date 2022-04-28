@@ -2,7 +2,9 @@
     "name": "kgb/system",
     "autoload": {
         "psr-4": {
-            "System\\": ["src/", "src/Controllers/", "src/Database/"]
+            "System\\": ["src/", "src/Controller/", "src/Models/Database/"],
+            "System\\Controllers\\": "src/Controller/Controllers/",
+            "System\\Tools\\": "src/Controller/Tools/"
         }
     },
     "authors": [
