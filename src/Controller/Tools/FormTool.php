@@ -38,9 +38,11 @@ class FormTool
      * @param int $datas
      * @return string
      */
-    public static function select ($name, $text, $datas, $default = null)
+    public static function select ($name, $text, $datas, $default = null, $multiple = false)
     {
-        $html = '<select name="' .$name. '">';
+        $html = '<select name="' .$name. '"';
+        if ($multiple) $html .= ' multiple';
+        $html .= '>';
             $html .= '<optgroup label="' .$text. '">';
 
                 foreach ($datas as $key => $value) {
@@ -63,45 +65,37 @@ class FormTool
      * @param string $type Classe name
      * @return string
      */
-    public static function button ($text, $action, $type, $data = null)
+    public static function button ($text, $action, $type)
     {
-            $html = '<button type="button" name="submit" class="btn-' .$type. '"><span><a name="' .$action. '"';
-            if ($data) $html .= ' data-infos="' .$data. '" ';
-            $html .= '>' .$text. '</a></span></button>';
+        $html = '<button type="submit" name="' .$action. '" class="btn-' .$type. '">';
+        $html .= $text;
+        $html .= '</button>';
+
         return $html;
     }
 
     /**
      * @param string $name
      * @param string $text
+     * @param bool $current
      * @param string $date
      * @return string
      */
-    public static function date ($name, $text, $default = null)
+    public static function date ($name, $text, $current = false, $default = null)
     {
-        $tomorrow = DateTool::dateFormat(DateTool::dateFormat(time(), 'tomorrow'), 'datetime');
+        $tomorrow = DateTool::dateFormat(DateTool::dateFormat(time(), 'tomorrow'));
         $id = uniqid();
 
         $html = '<div class="date">';
             $html .= '<label for="' .$id. '">' .$text. '</label>';
-            $html .= '<input id="' .$id. '" type="datetime-local" name="' .$name. '" min="' .$tomorrow. '"';
-            if (!is_null($default)) $html .= ' value="' .DateTool::dateFormat($default, 'datetime'). '"';
+
+            if ($current) $html .= '<input id="' .$id. '" type="date" name="' .$name. '" min="' .$tomorrow. '"';
+            else $html .= '<input id="' .$id. '" type="date" name="' .$name. '"';
+
+            if (!is_null($default)) $html .= ' value="' .DateTool::dateFormat($default). '"';
             $html .= ' />';
         $html .= '</div>';
 
-        return $html;
-    }
-
-    public static function images ($ph, $multiple = true) {
-        
-        $id = uniqid();
-        
-        $html = '<div class="img">';
-            $html .= '<label for="' .$id. '">' .$ph. '</label>';
-            $html .= '<input accept="image/png, image/jpeg" id="' .$id. '" type="file" ';
-            $html .= ($multiple)? 'name="image[]" multiple />': 'name="image" />';
-        $html .= '</div>';
-        
         return $html;
     }
 }

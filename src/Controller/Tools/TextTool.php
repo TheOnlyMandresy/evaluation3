@@ -80,4 +80,15 @@ class TextTool
         if (strlen($str) > $len) return substr($str, 0, $len) . '...';
         return $str;
     }
+
+    /**
+     * Create new format of uniqId
+     */
+    public static function uniqid ()
+    {
+        $x = time();
+        $y = DateTool::dateFormat(DateTool::dateFormat(time(), 'tomorrow'), 'timestamp');
+
+        return uniqid() . ($x + $y) . uniqid();
+    }
 }

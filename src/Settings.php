@@ -13,6 +13,7 @@ class Settings
     // Website
     protected const WEBSITE = 'KGB';
     protected const MISSION_STATE = [
+        'Aucune activité',
         'En préparation',
         'en cours',
         'terminé',

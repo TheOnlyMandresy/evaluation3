@@ -4,7 +4,8 @@
         "psr-4": {
             "System\\": ["src/", "src/Controller/", "src/Models/Database/"],
             "System\\Controllers\\": "src/Controller/Controllers/",
-            "System\\Tools\\": "src/Controller/Tools/"
+            "System\\Tools\\": "src/Controller/Tools/",
+            "System\\Database\\": ["src/Models/Database/", "src/Models/Database/Tables/"]
         }
     },
     "authors": [
