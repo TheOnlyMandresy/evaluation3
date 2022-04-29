@@ -23,6 +23,30 @@ class MissionsTable extends Tables
         return self::find($statement, '_hideouts', true);
     }
 
+    public static function newMission ($title, $desc, $cName, $cId, $aIds, $cIds, $tIds, $tId, $state, $hIds, $fId, $sDate, $eDate)
+    {
+        $aIds = implode(',', $aIds);
+        $cIds = implode(',', $cIds);
+        $tIds = implode(',', $tIds);
+        $hIds = implode(',', $hIds);
+        
+        self::generalAdd([
+            'title' => $title,
+            'description' => $desc,
+            'codeName' => $cName,
+            'countryId' => $cId,
+            'agentIds' => $aIds,
+            'contactIds' => $cIds,
+            'targetIds' => $tIds,
+            'typeId' => $tId,
+            'state' => $state,
+            'hideoutIds' => $hIds,
+            'facultyId' => $fId,
+            'startDate' => $sDate,
+            'endDate' => $eDate
+        ]);
+    }
+
     public static function newHideout ($code, $address, $countyId, $type)
     {
         self::generalAdd([

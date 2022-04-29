@@ -96,6 +96,8 @@ class UsersTable extends Tables
 
     public static function newAgent ($id, $lName, $fName, $bDate, $cId, $pass, $fIds)
     {
+        $fIds = implode(',', $fIds);
+
         self::newUser($id, $lName, $fName, $bDate, $cId);
 
         self::generalAdd([

@@ -28,15 +28,22 @@ class MissionsController extends Controller
             $desc = TextTool::security($_POST['description']);
             $cName = TextTool::security($_POST['codeName']);
             $cId = TextTool::security($_POST['country']);
-            $aIds = TextTool::security($_POST['agents']);
-            $cIds = TextTool::security($_POST['contacts']);
-            $tIds = TextTool::security($_POST['targets']);
+            $aIds = (is_array($_POST['agents'])) ? $_POST['agents'] : null;
+            $cIds = (is_array($_POST['contacts'])) ? $_POST['contacts'] : null;
+            $tIds = (is_array($_POST['targets'])) ? $_POST['targets'] : null;
             $tId = TextTool::security($_POST['type']);
             $state = TextTool::security($_POST['state']);
-            $hIds = TextTool::security($_POST['hideouts']);
+            $hIds = (is_array($_POST['hideouts'])) ? $_POST['hideouts'] : null;
             $fId = TextTool::security($_POST['faculty']);
             $sDate = TextTool::security($_POST['startDate']);
             $eDate = TextTool::security($_POST['endDate']);
+
+            if (!is_null($aIds)) for ($i = 0; $i < count($aIds); $i++) $aIds[$i] = TextTool::security($aIds[$i]);
+            if (!is_null($cIds)) for ($i = 0; $i < count($cIds); $i++) $cIds[$i] = TextTool::security($cIds[$i]);
+            if (!is_null($tIds)) for ($i = 0; $i < count($tIds); $i++) $tIds[$i] = TextTool::security($tIds[$i]);
+            if (!is_null($hIds)) for ($i = 0; $i < count($hIds); $i++) $hIds[$i] = TextTool::security($hIds[$i]);
+
+            MissionsTable::newMission($title, $desc, $cName, $cId, $aIds, $cIds, $tIds, $tId, $state, $hIds, $fId, $sDate, $eDate);
         }
 
         $title = TextTool::setTitle('les missions');
@@ -51,7 +58,7 @@ class MissionsController extends Controller
 
         $faculties = [];
         $allF = SystemTable::allFaculties();
-        if ($allF) for ($i = 0; $i < count($allF); $i++) $hideouts[$allF[$i]->id] = $allF[$i]->name;
+        if ($allF) for ($i = 0; $i < count($allF); $i++) $faculties[$allF[$i]->id] = $allF[$i]->name;
 
         $agents = [];
         $allA = UsersTable::allAgents();
@@ -70,6 +77,14 @@ class MissionsController extends Controller
         if ($allH) for ($i = 0; $i < count($allH); $i++) $hideouts[$allH[$i]->id] = $allH[$i]->code. ' (' .$allH[$i]->address. ')';
 
         $all = MissionsTable::allMissions();
+        if ($all) {
+        for ($i = 0; $i < count($all); $i++):
+            $all[$i]->agentIds = explode(',', $all[$i]->agentIds);
+            $all[$i]->contactIds = explode(',', $all[$i]->contactIds);
+            $all[$i]->targetIds = explode(',', $all[$i]->targetIds);
+            $all[$i]->hideoutIds = explode(',', $all[$i]->hideoutIds);    
+        endfor;
+        }
 
         self::render('missions/all', compact(self::compact(['all', 'countries', 'types', 'faculties', 'agents', 'contacts', 'targets', 'hideouts'])));
     }
