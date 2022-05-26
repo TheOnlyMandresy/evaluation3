@@ -3,6 +3,8 @@
 namespace System\Controllers;
 
 use System\Controller;
+use System\Database\Tables\UsersTable;
+use System\Tools\DateTool;
 use System\Tools\TextTool;
 
 class IndexController extends Controller
@@ -23,6 +25,7 @@ class IndexController extends Controller
 
     private static function index ()
     {
+
         $title = TextTool::setTitle('accueil');
 
         self::render('base/index', compact(static::$compact));

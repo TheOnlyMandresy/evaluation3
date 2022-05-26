@@ -3,6 +3,7 @@
 namespace System\Controllers;
 
 use System\Database\Tables\UsersTable;
+use System\Database\Tables\AdminTable;
 use System\Database\Tables\SystemTable;
 use System\Controller;
 use System\Tools\DateTool;
@@ -28,36 +29,58 @@ class UsersController extends Controller
 
     private static function index ()
     {
+        if (isset($_SESSION['user'])) header('Location: /');
+        
         $title = TextTool::setTitle('connexion');
 
-        $agents = UsersTable::allContacts();
+        if (isset($_POST['login'])) {
+            $email = TextTool::security($_POST['email']);
+            $password = TextTool::security($_POST['password']);
+            $id = false;
 
-        self::render('users/login', compact(static::compact(['agents'])));
+            $id = AdminTable::login($email, $password);
+
+            if ($id) header('Location: /');
+        }
+
+        self::render('users/login', compact(self::compact()));
     }
 
     private static function logout ()
     {
-        $title = TextTool::setTitle('deconnexion');
+        if (!isset($_SESSION['user'])) header('Location: /');
+        
+        $datas['datas'] = ['identificationId' => null];
+        $datas['ids'] = ['identificationId' => $_SESSION['user']];
 
-        self::render('index', compact(static::$compact));
+        AdminTable::generalEdit($datas);
+        unset($_SESSION['user']);
+
+        header('Location: /');
     }
 
     private static function agents ()
     {
-        if (isset($_POST['new'])) {
-            $id = TextTool::uniqid();
+        if (isset($_POST['new']) || isset($_POST['edit'])) {
+            $userId = TextTool::uniqid();
             $lName = TextTool::security($_POST['lastname']);
             $fName = TextTool::security($_POST['firstname']);
-            $bDate = DateTool::dateFormat(TextTool::security($_POST['birthday']), 'datetime');
+            $bDate = DateTool::dateFormat(TextTool::security($_POST['birth']), 'datetime');
+            $cName = TextTool::security($_POST['codeName']);
             $cId = TextTool::security($_POST['nationality']);
-            $pass = TextTool::security($_POST['password']);
             $fIds = (is_array($_POST['faculties'])) ? $_POST['faculties'] : null;
 
-            $pass = TextTool::security($pass, 'convertPass');
             if (!is_null($fIds)) for ($i = 0; $i < count($fIds); $i++) $fIds[$i] = TextTool::security($fIds[$i]);
 
-            UsersTable::newAgent($id, $lName, $fName, $bDate, $cId, $pass, $fIds);
+            if (isset($_POST['new'])) UsersTable::newAgent($userId, $lName, $fName, $bDate, $cName, $cId, $fIds);
+
+            if (isset($_POST['edit'])) {
+                $userId = $_POST['edit'];
+                UsersTable::editAgent($userId, $lName, $fName, $bDate, $cName, $cId, $fIds);
+            }
         }
+
+        if (isset($_POST['delete'])) UsersTable::deleteAgent($_POST['delete']);
 
         $title = TextTool::setTitle('les agents');
     
@@ -79,16 +102,23 @@ class UsersController extends Controller
 
     private static function contacts ()
     {
-        if (isset($_POST['newContact'])) {
-            $id = TextTool::uniqid();
+        if (isset($_POST['new']) || isset($_POST['edit'])) {
+            $userId = TextTool::uniqid();
             $lName = TextTool::security($_POST['lastname']);
             $fName = TextTool::security($_POST['firstname']);
-            $bDate = DateTool::dateFormat(TextTool::security($_POST['birthday']), 'datetime');
+            $bDate = DateTool::dateFormat(TextTool::security($_POST['birth']), 'datetime');
             $cId = TextTool::security($_POST['nationality']);
             $cName = TextTool::security($_POST['codeName']);
 
-            UsersTable::newContact($id, $lName, $fName, $bDate, $cId, $cName);
+            if (isset($_POST['new'])) UsersTable::newContact($userId, $lName, $fName, $bDate, $cId, $cName);
+
+            if (isset($_POST['edit'])) {
+                $userId = $_POST['edit'];
+                UsersTable::editContact($userId, $lName, $fName, $bDate, $cId, $cName);
+            }
         }
+
+        if (isset($_POST['delete'])) UsersTable::deleteContact($_POST['delete']);
 
         $title = TextTool::setTitle('les contacts');
         $nationalities = [];
@@ -104,16 +134,23 @@ class UsersController extends Controller
 
     private static function targets ()
     {
-        if (isset($_POST['newTarget'])) {
-            $id = TextTool::uniqid();
+        if (isset($_POST['new']) || isset($_POST['edit'])) {
+            $userId = TextTool::uniqid();
             $lName = TextTool::security($_POST['lastname']);
             $fName = TextTool::security($_POST['firstname']);
-            $bDate = DateTool::dateFormat(TextTool::security($_POST['birthday']), 'datetime');
+            $bDate = DateTool::dateFormat(TextTool::security($_POST['birth']), 'datetime');
             $cId = TextTool::security($_POST['nationality']);
             $cName = TextTool::security($_POST['codeName']);
 
-            UsersTable::newTarget($id, $lName, $fName, $bDate, $cId, $cName);
+            if (isset($_POST['new'])) UsersTable::newTarget($userId, $lName, $fName, $bDate, $cId, $cName);
+
+            if (isset($_POST['edit'])) {
+                $userId = $_POST['edit'];
+                UsersTable::editTarget($userId, $lName, $fName, $bDate, $cId, $cName);
+            }
         }
+
+        if (isset($_POST['delete'])) UsersTable::deleteTarget($_POST['delete']);
 
         $title = TextTool::setTitle('les cibles');
         $nationalities = [];
@@ -125,5 +162,18 @@ class UsersController extends Controller
         }
 
         self::render('users/targets', compact(self::compact(['all', 'nationalities'])));
+    }
+
+    private static function password ()
+    {
+        if (isset($_POST['generate'])) {
+            $password = TextTool::security($_POST['password']);
+            $secure = TextTool::security($password, 'convertPass');
+            self::compact(['secure']);
+        }
+        
+        $title = TextTool::setTitle('securiseur de mot de passe');
+
+        self::render('users/password', compact(static::compact()));
     }
 }

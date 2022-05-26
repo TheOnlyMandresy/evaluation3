@@ -9,10 +9,10 @@ class Controller
     protected static $compact = [];
 
     /**
-     * Rendering page
-     * @param string $name Page to load
+     * Rendu de page
+     * @param string $name Page à charger
      * @param array $vars
-     * @param bool $api Is an api data
+     * @param bool $api Est-ce une API
      */
     protected static function render ($name, $vars = [], $api = false)
     {
@@ -29,12 +29,12 @@ class Controller
         }
         
         require_once System::root(1). 'Views/Pages/' .ucfirst($name). '.php';
-
-        if (!$api) require_once System::root(1). 'Views/Layouts/Base.php';
+        require_once System::root(1). 'Views/Layouts/Base.php';
+        unset($_SESSION['flash']);
     }
     
     /**
-     * All systems errors
+     * Toutes les erreurs du system
      * @param int $code
      */
     protected static function error ($code)
@@ -54,9 +54,9 @@ class Controller
     }
     
     /** 
-     * Add unexpected datas
+     * Ajout de données
      * @param array $array Variables
-     * @param bool $delete Start a new list
+     * @param bool $delete Commencer une nouvelle liste
      * @return array
      */
     protected static function compact ($array = null, $delete = false)
@@ -70,5 +70,11 @@ class Controller
         }
 
         return static::$compact;
+    }
+
+    protected static function flash ($message, $type)
+    {
+        $_SESSION['flash']['message'] = $message;
+        $_SESSION['flash']['type'] = $type;
     }
 }

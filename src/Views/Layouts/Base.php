@@ -22,13 +22,32 @@
 </head>
 
 <body>
+    <div class="logo"></div>
+
     <header><?php require_once 'Header.php'; ?></header>
 
-    <?= $content; ?>
+    <main>
+        <?php if (isset($_SESSION['flash'])): ?>
+            <div class="flash <?= $_SESSION['flash']['type']; ?>">
+                <?= $_SESSION['flash']['message']; ?>
+            </div>
+        <?php endif; ?>
+
+        <?= $content; ?>
+    </main>
 
     <footer><?php require_once 'Footer.php' ; ?></footer>
 
-    <script src="/js/mains.js"></script>
+    <script src="/js/main.js"></script>
 </body>
 
 </html>
+
+<!-- 
+.------.
+|K.--. |
+| :/\: |
+| :\/: |
+| '--'H|
+`------'
+-->

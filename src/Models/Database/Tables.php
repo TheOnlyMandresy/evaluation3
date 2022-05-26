@@ -176,11 +176,18 @@ class Tables
         return static::update($statement, $underSection);
     }
 
-    public static function generalDelete ($id, $underSection = null)
+    public static function generalDelete ($datas, $underSection = null)
     {
+        if (!is_array($datas)) {
+            $id = $datas;
+            $datas = [];
+            $datas[] = 'id';
+            $datas[] = $id;
+        }
+
         $statement = [
-            'where' => 'id = ?',
-            'att' => [$id]
+            'where' => $datas[0]. ' = ?',
+            'att' => [$datas[1]]
         ];
 
         return static::delete($statement, $underSection);

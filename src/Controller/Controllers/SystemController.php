@@ -20,10 +20,21 @@ class SystemController extends Controller
 
     private static function countries ()
     {
-        if (isset($_POST['new'])) {
+        if (isset($_POST['new']) || isset($_POST['edit'])) {
             $country = TextTool::security($_POST['country']);
             $nationality = TextTool::security($_POST['nationality']);
-            SystemTable::newCountry($country, $nationality);
+            
+            if (isset($_POST['new'])) SystemTable::newCountry($country, $nationality);
+
+            if (isset($_POST['edit'])) {
+                $id = intval($_POST['edit']);
+                SystemTable::editCountry($id, $country, $nationality);
+            }
+        }
+
+        if (isset($_POST['delete'])) {
+            $id = intval($_POST['delete']);
+            SystemTable::deleteCountry($id);
         }
 
         $title = TextTool::setTitle('les pays');
@@ -35,9 +46,20 @@ class SystemController extends Controller
 
     private static function faculties ()
     {
-        if (isset($_POST['new'])) {
+        if (isset($_POST['new']) || isset($_POST['edit'])) {
             $name = TextTool::security($_POST['name']);
-            SystemTable::newFaculty($name);
+            
+            if (isset($_POST['new'])) SystemTable::newFaculty($name);
+
+            if (isset($_POST['edit'])) {
+                $id = intval($_POST['edit']);
+                SystemTable::editFaculty($id, $name);
+            }
+        }
+
+        if (isset($_POST['delete'])) {
+            $id = intval($_POST['delete']);
+            SystemTable::deleteFaculty($id);
         }
 
         $title = TextTool::setTitle('Facultés d\'agent');
@@ -48,9 +70,20 @@ class SystemController extends Controller
 
     private static function missions ()
     {
-        if (isset($_POST['new'])) {
+        if (isset($_POST['new']) || isset($_POST['edit'])) {
             $name = TextTool::security($_POST['name']);
-            SystemTable::newMissionType($name);
+            
+            if (isset($_POST['new'])) SystemTable::newMissionType($name);
+
+            if (isset($_POST['edit'])) {
+                $id = intval($_POST['edit']);
+                SystemTable::editMissionType($id, $name);
+            }
+        }
+
+        if (isset($_POST['delete'])) {
+            $id = intval($_POST['delete']);
+            SystemTable::deleteMissionType($id);
         }
 
         $title = TextTool::setTitle('types de mission');

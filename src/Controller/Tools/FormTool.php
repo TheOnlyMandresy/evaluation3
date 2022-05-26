@@ -65,9 +65,11 @@ class FormTool
      * @param string $type Classe name
      * @return string
      */
-    public static function button ($text, $action, $type)
+    public static function button ($text, $action, $type, $value = null)
     {
-        $html = '<button type="submit" name="' .$action. '" class="btn-' .$type. '">';
+        $html = '<button type="submit" name="' .$action. '" class="btn-' .$type. '"';
+        if (!is_null($value)) $html .= ' value="' .$value. '"';
+        $html .= '>';
         $html .= $text;
         $html .= '</button>';
 

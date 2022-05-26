@@ -20,10 +20,10 @@ class MissionsController extends Controller
         self::$load();
     }
 
-    private static function new ()
+    private static function all ()
     {
-        if (isset($_POST['new']))
-        {
+        if (isset($_POST['new']) || isset($_POST['edit'])) {
+            $setDatas = true;
             $title = TextTool::security($_POST['title']);
             $desc = TextTool::security($_POST['description']);
             $cName = TextTool::security($_POST['codeName']);
@@ -38,12 +38,66 @@ class MissionsController extends Controller
             $sDate = TextTool::security($_POST['startDate']);
             $eDate = TextTool::security($_POST['endDate']);
 
-            if (!is_null($aIds)) for ($i = 0; $i < count($aIds); $i++) $aIds[$i] = TextTool::security($aIds[$i]);
-            if (!is_null($cIds)) for ($i = 0; $i < count($cIds); $i++) $cIds[$i] = TextTool::security($cIds[$i]);
-            if (!is_null($tIds)) for ($i = 0; $i < count($tIds); $i++) $tIds[$i] = TextTool::security($tIds[$i]);
-            if (!is_null($hIds)) for ($i = 0; $i < count($hIds); $i++) $hIds[$i] = TextTool::security($hIds[$i]);
+            if (!is_null($aIds)) for ($x = 0; $x < count($aIds); $x++) $aIds[$x] = TextTool::security($aIds[$x]);
+            if (!is_null($cIds)) for ($x = 0; $x < count($cIds); $x++) $cIds[$x] = TextTool::security($cIds[$x]);
+            if (!is_null($tIds)) for ($x = 0; $x < count($tIds); $x++) $tIds[$x] = TextTool::security($tIds[$x]);
+            if (!is_null($hIds)) for ($x = 0; $x < count($hIds); $x++) $hIds[$x] = TextTool::security($hIds[$x]);
 
-            MissionsTable::newMission($title, $desc, $cName, $cId, $aIds, $cIds, $tIds, $tId, $state, $hIds, $fId, $sDate, $eDate);
+            if (!is_null($aIds) and !is_null(($tIds))) {
+            for ($x = 0; $x < count($tIds); $x++):
+                if (MissionsTable::targetAndAgentsMatch($tIds[$x], $aIds)) {
+                    self::flash('Les agents ne peuvent pas être de la même nationalité que les cibles.', 'danger');
+                    $setDatas = false;
+                }
+            endfor;
+            }
+            
+            if (!is_null($cIds)) {
+            for ($x = 0; $x < count($cIds); $x++):
+                $country = SystemTable::getCountry($cId);
+                $contact = UsersTable::getContact($cIds[$x]);
+                
+                if ($contact->nationality !== $country->nationality) {
+                    self::flash('Les contacts doivent être de la même nationalité que le pays où se déroule la mission.', 'danger');
+                    $setDatas = false;
+                }
+            endfor;
+            }
+            
+            if (!is_null($hIds)) {
+            for ($x = 0; $x < count($hIds); $x++):
+                $country = SystemTable::getCountry($cId);
+                $hidehout = MissionsTable::getHideout($hIds[$x]);
+                
+                if ($hidehout->country !== $country->country) {
+                    self::flash('Les planques doivent être dans le même pays que celui où se déroule la mission.', 'danger');
+                    $setDatas = false;
+                }
+            endfor;
+            }
+
+            if (!is_null($aIds)) {
+                if (!MissionsTable::agentsGotTheFaculty($fId, $aIds)) {
+                    self::flash('Au moins un agent doit posséder la spécialité requise pour la mission.', 'danger');
+                    $setDatas = false;
+                }
+            }
+            
+            if ($setDatas) {
+                if (isset($_POST['new'])) MissionsTable::newMission($title, $desc, $cName, $cId, $aIds, $cIds, $tIds, $tId, $state, $hIds, $fId, $sDate, $eDate);
+                
+                if (isset($_POST['edit'])) {
+                    $id = intval($_POST['edit']);
+                    MissionsTable::editMission($id, $title, $desc, $cName, $cId, $aIds, $cIds, $tIds, $tId, $state, $hIds, $fId, $sDate, $eDate);
+                }
+            }
+
+            unset($_POST['edit'], $_POST['new']);
+        }
+
+        if (isset($_POST['delete'])) {
+            $id = intval($_POST['delete']);
+            MissionsTable::deleteMission($id);
         }
 
         $title = TextTool::setTitle('les missions');
@@ -91,13 +145,23 @@ class MissionsController extends Controller
 
     private static function hideouts ()
     {
-        if (isset($_POST['new'])) {
+        if (isset($_POST['new']) || isset($_POST['edit'])) {
             $code = TextTool::security($_POST['code']);
             $address = TextTool::security($_POST['address']);
             $countryId = TextTool::security($_POST['country']);
             $type = TextTool::security($_POST['type']);
 
-            MissionsTable::newHideout($code, $address, $countryId, $type);
+            if (isset($_POST['new'])) MissionsTable::newHideout($code, $address, $countryId, $type);
+
+            if (isset($_POST['edit'])) {
+                $id = intval($_POST['edit']);
+                MissionsTable::editHideout($id, $code, $address, $countryId, $type);
+            }
+        }
+
+        if (isset($_POST['delete'])) {
+            $id = intval($_POST['delete']);
+            MissionsTable::deleteHideout($id);
         }
 
         $title = TextTool::setTitle('les planques');

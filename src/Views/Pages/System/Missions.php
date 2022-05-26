@@ -2,20 +2,24 @@
 
 <?php ob_start(); ?>
 
-<h1>Types de mission</h1>
+<h1 data-section="missions type">Types de mission</h1>
 
-<form method="POST">
+<form method="POST" autocomplete="off">
     <?= FormTool::input('text', 'name', 'Intitulé'); ?>
     <?= FormTool::button('Nouveau type de mission', 'new', 'success'); ?>
 </form>
 
 <div class="list">
-    <h2>Liste</h2>
+    <h2>Liste <input id="search" type="input" autocomplete="off" placeholder="Recherche par type de mission" /></h2>
 <?php if ($all): ?>
 
     <?php foreach ($all as $data): ?>    
-    <div class="box">
-        <h3><?= $data->name; ?></h3>
+    <div class="box" data-id="<?= $data->id; ?>">
+        <p><?= $data->name; ?></p>
+        
+        <div class="buttons">
+            <button class="btn-warning" data-edit="<?= $data->id; ?>">Modifier</button>
+        </div>
     </div>
     <?php endforeach; ?>
 
