@@ -8,7 +8,7 @@ namespace System\Tools;
  */
 class ErrorTool
 { 
-    function __construct ($code)
+    public static function error ($code)
     {
         switch ($code)
         {

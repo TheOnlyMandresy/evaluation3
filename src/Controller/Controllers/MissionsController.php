@@ -7,6 +7,7 @@ use System\Database\Tables\MissionsTable;
 use System\Database\Tables\SystemTable;
 use System\Database\Tables\UsersTable;
 use System\Tools\DateTool;
+use System\Tools\ErrorTool;
 use System\Tools\TextTool;
 
 class MissionsController extends Controller
@@ -17,11 +18,16 @@ class MissionsController extends Controller
         array_shift($page);
 
         $load = $page[0];
-        self::$load();
+
+        if (count($page) === 1): self::$load();
+        else: self::$load($page[1]);
+        endif;
     }
 
     private static function all ()
     {
+        if (!isset($_SESSION['admin'])) return ErrorTool::error(405);
+
         if (isset($_POST['new']) || isset($_POST['edit'])) {
             $setDatas = true;
             $title = TextTool::security($_POST['title']);
@@ -133,6 +139,7 @@ class MissionsController extends Controller
         $all = MissionsTable::allMissions();
         if ($all) {
         for ($i = 0; $i < count($all); $i++):
+            $all[$i]->description = TextTool::security($all[$i]->description, 'decode');
             $all[$i]->agentIds = explode(',', $all[$i]->agentIds);
             $all[$i]->contactIds = explode(',', $all[$i]->contactIds);
             $all[$i]->targetIds = explode(',', $all[$i]->targetIds);
@@ -145,6 +152,8 @@ class MissionsController extends Controller
 
     private static function hideouts ()
     {
+        if (!isset($_SESSION['admin'])) return ErrorTool::error(405);
+
         if (isset($_POST['new']) || isset($_POST['edit'])) {
             $code = TextTool::security($_POST['code']);
             $address = TextTool::security($_POST['address']);
@@ -173,5 +182,49 @@ class MissionsController extends Controller
         $all = MissionsTable::allHideouts();
 
         self::render('missions/hideouts', compact(self::compact(['all', 'countries'])));
+    }
+
+    private static function r ($id)
+    {
+        $id = intval($id);
+        $datas = MissionsTable::getMission($id);
+
+        $title = TextTool::setTitle($datas->title);
+
+        $countries = [];
+        $allC = SystemTable::allCountries();
+        if ($allC) for ($i = 0; $i < count($allC); $i++) $countries[$allC[$i]->id] = $allC[$i]->country;
+
+        $types = [];
+        $allMT = SystemTable::allMissionsType();
+        if ($allMT) for ($i = 0; $i < count($allMT); $i++) $types[$allMT[$i]->id] = $allMT[$i]->name;
+
+        $faculties = [];
+        $allF = SystemTable::allFaculties();
+        if ($allF) for ($i = 0; $i < count($allF); $i++) $faculties[$allF[$i]->id] = $allF[$i]->name;
+
+        $agents = [];
+        $allA = UsersTable::allAgents();
+        if ($allA) for ($i = 0; $i < count($allA); $i++) $agents[$allA[$i]->id] = $allA[$i]->codeName;
+
+        $contacts = [];
+        $allC = UsersTable::allContacts();
+        if ($allC) for ($i = 0; $i < count($allC); $i++) $contacts[$allC[$i]->id] = $allC[$i]->codeName;
+
+        $targets = [];
+        $allT = UsersTable::allTargets();
+        if ($allT) for ($i = 0; $i < count($allT); $i++) $targets[$allT[$i]->id] = $allT[$i]->lastname. ' ' .$allT[$i]->firstname. ' (' .$allT[$i]->codeName. ')';
+
+        $hideouts = [];
+        $allH = MissionsTable::allHideouts();
+        if ($allH) for ($i = 0; $i < count($allH); $i++) $hideouts[$allH[$i]->id] = $allH[$i]->code. ' (' .$allH[$i]->address. ')';
+
+        $datas->description = TextTool::security($datas->description, 'decode');
+        $datas->agentIds = explode(',', $datas->agentIds);
+        $datas->contactIds = explode(',', $datas->contactIds);
+        $datas->targetIds = explode(',', $datas->targetIds);
+        $datas->hideoutIds = explode(',', $datas->hideoutIds);
+
+        self::render('missions/read', compact(self::compact(['datas', 'countries', 'types', 'faculties', 'agents', 'contacts', 'targets', 'hideouts'])));
     }
 }

@@ -2,10 +2,10 @@
 
 namespace System\Controllers;
 
-use System;
 use System\Database\Tables\SystemTable;
 use System\Controller;
 use System\Tools\TextTool;
+use System\Tools\ErrorTool;
 
 class SystemController extends Controller
 {
@@ -20,6 +20,8 @@ class SystemController extends Controller
 
     private static function countries ()
     {
+        if (!isset($_SESSION['admin'])) return ErrorTool::error(405);
+
         if (isset($_POST['new']) || isset($_POST['edit'])) {
             $country = TextTool::security($_POST['country']);
             $nationality = TextTool::security($_POST['nationality']);
@@ -46,6 +48,8 @@ class SystemController extends Controller
 
     private static function faculties ()
     {
+        if (!isset($_SESSION['admin'])) return ErrorTool::error(405);
+
         if (isset($_POST['new']) || isset($_POST['edit'])) {
             $name = TextTool::security($_POST['name']);
             
@@ -70,6 +74,8 @@ class SystemController extends Controller
 
     private static function missions ()
     {
+        if (!isset($_SESSION['admin'])) return ErrorTool::error(405);
+
         if (isset($_POST['new']) || isset($_POST['edit'])) {
             $name = TextTool::security($_POST['name']);
             

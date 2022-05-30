@@ -34,9 +34,24 @@ class AdminTable extends Tables
             
             self::generalEdit($datas);
             
-            $_SESSION['user'] = $identification;
+            $_SESSION['admin'] = $identification;
     
             return $identification;
+        }
+
+        return false;
+    }
+
+    public static function isLogged ()
+    {
+        if (isset($_SESSION['admin'])) {
+
+            $statement['where'] = 'identificationId = ?';
+            $statement['att'] = $_SESSION['admin'];
+            $find = self::find($statement);
+            
+            if ($find) return true;
+            unset($_SESSION['admin']);
         }
 
         return false;

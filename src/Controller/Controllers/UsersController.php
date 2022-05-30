@@ -29,7 +29,7 @@ class UsersController extends Controller
 
     private static function index ()
     {
-        if (isset($_SESSION['user'])) header('Location: /');
+        if (isset($_SESSION['admin'])) header('Location: /');
         
         $title = TextTool::setTitle('connexion');
 
@@ -48,19 +48,21 @@ class UsersController extends Controller
 
     private static function logout ()
     {
-        if (!isset($_SESSION['user'])) header('Location: /');
+        if (!isset($_SESSION['admin'])) header('Location: /');
         
         $datas['datas'] = ['identificationId' => null];
-        $datas['ids'] = ['identificationId' => $_SESSION['user']];
+        $datas['ids'] = ['identificationId' => $_SESSION['admin']];
 
         AdminTable::generalEdit($datas);
-        unset($_SESSION['user']);
+        unset($_SESSION['admin']);
 
         header('Location: /');
     }
 
     private static function agents ()
     {
+        if (!isset($_SESSION['admin'])) return ErrorTool::error(405);
+
         if (isset($_POST['new']) || isset($_POST['edit'])) {
             $userId = TextTool::uniqid();
             $lName = TextTool::security($_POST['lastname']);
@@ -102,6 +104,8 @@ class UsersController extends Controller
 
     private static function contacts ()
     {
+        if (!isset($_SESSION['admin'])) return ErrorTool::error(405);
+
         if (isset($_POST['new']) || isset($_POST['edit'])) {
             $userId = TextTool::uniqid();
             $lName = TextTool::security($_POST['lastname']);
@@ -134,6 +138,8 @@ class UsersController extends Controller
 
     private static function targets ()
     {
+        if (!isset($_SESSION['admin'])) return ErrorTool::error(405);
+
         if (isset($_POST['new']) || isset($_POST['edit'])) {
             $userId = TextTool::uniqid();
             $lName = TextTool::security($_POST['lastname']);
@@ -166,6 +172,8 @@ class UsersController extends Controller
 
     private static function password ()
     {
+        if (!isset($_SESSION['admin'])) return ErrorTool::error(405);
+        
         if (isset($_POST['generate'])) {
             $password = TextTool::security($_POST['password']);
             $secure = TextTool::security($password, 'convertPass');

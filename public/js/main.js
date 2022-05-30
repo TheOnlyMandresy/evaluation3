@@ -1,12 +1,13 @@
 const list = document.querySelectorAll('[data-id]');
+const editsBtn = document.querySelectorAll('[data-edit]');
 
 if (list.length > 0) {
-    const editsBtn = document.querySelectorAll('[data-edit]');
     const searchBar = document.getElementById('search');
 
-    editsBtn.forEach(el => el.addEventListener('click', editModal));
     searchBar.addEventListener('input', research);
 }
+
+if (editsBtn.length > 0) editsBtn.forEach(el => el.addEventListener('click', editModal));
 
 function editModal (e)
 {

@@ -1,7 +1,7 @@
 <?php
-
 use System\Tools\DateTool;
-use System\Tools\FormTool; ?>
+use System\Tools\FormTool;
+?>
 
 <?php ob_start(); ?>
 
@@ -26,7 +26,7 @@ use System\Tools\FormTool; ?>
 </form>
 
 <div class="list">
-    <h2>Liste <input id="search" type="input" autocomplete="off" placeholder="Recherche par nom de code" /></h2>
+    <h2>Liste <input id="search" type="input" autocomplete="off" placeholder="Recherche par titre" /></h2>
 <?php if ($all): ?>
     
     <?php foreach ($all as $data): ?>    
