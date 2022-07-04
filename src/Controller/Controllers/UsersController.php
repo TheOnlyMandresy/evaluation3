@@ -171,9 +171,7 @@ class UsersController extends Controller
     }
 
     private static function password ()
-    {
-        if (!isset($_SESSION['admin'])) return ErrorTool::error(405);
-        
+    {        
         if (isset($_POST['generate'])) {
             $password = TextTool::security($_POST['password']);
             $secure = TextTool::security($password, 'convertPass');
