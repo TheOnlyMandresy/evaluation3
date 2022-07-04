@@ -5,7 +5,7 @@
 
 <?php ob_start(); ?>
 
-<h1>Sécurier un mot de passe</h1>
+<h1>Sécuriser un mot de passe</h1>
 <form method="POST" autocomplete="off">
     <?= FormTool::input('password', 'password', 'Mot de passe à sécuriser'); ?>
 
