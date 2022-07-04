@@ -5,10 +5,10 @@ namespace System;
 class Settings
 {
     // Database
-    protected const DB_NAME = 'kgb';
-    protected const DB_HOST = 'localhost';
-    protected const DB_USER = 'root';
-    protected const DB_PASS = '';
+    protected const DB_NAME = 'dbs7851031';
+    protected const DB_HOST = 'db5009267321.hosting-data.io';
+    protected const DB_USER = 'dbu2463394';
+    protected const DB_PASS = 'jQ.Vy738Hed9sJx';
 
     // Website
     protected const WEBSITE = 'KGB';
@@ -26,9 +26,7 @@ class Settings
     protected const CMS_AUTHOR_URL = 'https://www.instagram.com/monsieur.rvy/';
 
     // Metas
-    protected const META_DESC = "Hypnos est un groupe hôtelier fondé en 2004. Propriétaire de 7 établissements dans les quatre
-    coins de l’hexagone, chacun de ces hôtels s’avère être une destination idéale pour les couples
-    en quête d’un séjour romantique à deux." ;
+    protected const META_DESC = "KGB" ;
     protected const META_IMG = 'logo.png' ;
 
 }
