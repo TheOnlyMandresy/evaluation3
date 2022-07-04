@@ -213,11 +213,11 @@ class MissionsController extends Controller
 
         $targets = [];
         $allT = UsersTable::allTargets();
-        if ($allT) for ($i = 0; $i < count($allT); $i++) $targets[$allT[$i]->id] = $allT[$i]->lastname. ' ' .$allT[$i]->firstname. ' (' .$allT[$i]->codeName. ')';
+        if ($allT) for ($i = 0; $i < count($allT); $i++) $targets[$allT[$i]->id] = $allT[$i]->codeName;
 
         $hideouts = [];
         $allH = MissionsTable::allHideouts();
-        if ($allH) for ($i = 0; $i < count($allH); $i++) $hideouts[$allH[$i]->id] = $allH[$i]->code. ' (' .$allH[$i]->address. ')';
+        if ($allH) for ($i = 0; $i < count($allH); $i++) $hideouts[$allH[$i]->id] = $allH[$i]->code;
 
         $datas->description = TextTool::security($datas->description, 'decode');
         $datas->agentIds = explode(',', $datas->agentIds);
